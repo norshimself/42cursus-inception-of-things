@@ -7,15 +7,15 @@
 
 ## Contents
 
-- I. [Preamble](#chapter-i-preamble)
-- II. [Introduction](#chapter-ii-introduction)
-- III. [General guidelines](#chapter-iii-general-guidelines)
-- IV. [Mandatory part](#chapter-iv-mandatory-part)
+- I. [Preamble](#chapter-i--preamble)
+- II. [Introduction](#chapter-ii--introduction)
+- III. [General guidelines](#chapter-iii--general-guidelines)
+- IV. [Mandatory part](#chapter-iv--mandatory-part)
   - IV.1 [Part 1: K3s and Vagrant](#iv1-part-1-k3s-and-vagrant)
   - IV.2 [Part 2: K3s and three simple applications](#iv2-part-2-k3s-and-three-simple-applications)
   - IV.3 [Part 3: K3d and Argo CD](#iv3-part-3-k3d-and-argo-cd)
-- V. [Bonus part](#chapter-v-bonus-part)
-- VI. [Submission and peer-evaluation](#chapter-vi-submission-and-peer-evaluation)
+- V. [Bonus part](#chapter-v--bonus-part)
+- VI. [Submission and peer-evaluation](#chapter-vi--submission-and-peer-evaluation)
 
 ---
 
