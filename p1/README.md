@@ -11,7 +11,7 @@ vagrant ssh zoukaddoS -c "hostname"
 
 
 vagrant ssh zoukaddoS -c "k3s --version"
-vagrant ssh zoukaddoSW -c "k3s --version
+vagrant ssh zoukaddoSW -c "k3s --version"
 
 
 
