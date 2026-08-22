@@ -1,0 +1,160 @@
+# ==========================================
+# Application 1 (app-one)
+# ==========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-one
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1
+  template:
+    metadata:
+      labels:
+        app: app1
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        hostPath:
+          path: /vagrant/confs/app-one
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-one
+spec:
+  type: ClusterIP
+  selector:
+    app: app1
+  ports:
+  - port: 80
+    targetPort: 80
+---
+# ==========================================
+# Application 2 (app-two, 3 replicas)
+# ==========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-two
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app2
+  template:
+    metadata:
+      labels:
+        app: app2
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        hostPath:
+          path: /vagrant/confs/app-two
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-two
+spec:
+  type: ClusterIP
+  selector:
+    app: app2
+  ports:
+  - port: 80
+    targetPort: 80
+---
+# ==========================================
+# Application 3 (app-three, default backend)
+# ==========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-three
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app3
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        hostPath:
+          path: /vagrant/confs/app-three
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-three
+spec:
+  type: ClusterIP
+  selector:
+    app: app3
+  ports:
+  - port: 80
+    targetPort: 80
+---
+# ==========================================
+# Ingress Controller Routing
+# ==========================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  defaultBackend:
+    service:
+      name: app-three
+      port:
+        number: 80
+  rules:
+  - host: app1.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-one
+            port:
+              number: 80
+  - host: app2.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-two
+            port:
+              number: 80
