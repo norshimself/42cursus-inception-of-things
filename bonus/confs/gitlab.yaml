@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+      containers:
+      - name: gitlab
+        image: gitlab/gitlab-ce:latest
+        env:
+        - name: GITLAB_OMNIBUS_CONFIG
+          value: |
+            external_url 'http://localhost:8081'
+            gitlab_rails['initial_root_password'] = 'rootpassword123'
+        ports:
+        - containerPort: 80
+          name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  type: LoadBalancer
+  selector:
+    app: gitlab
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    nodePort: 30081
