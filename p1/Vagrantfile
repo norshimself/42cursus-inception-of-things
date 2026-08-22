@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Base Box configuration
+  config.vm.box = "bento/ubuntu-24.04"
+
+  # ==========================================
+  # Controller Node (Server)
+  # ==========================================
+  config.vm.define "zoukaddoS" do |server|
+    server.vm.hostname = "zoukaddoS"
+    server.vm.network "private_network", ip: "192.168.56.110"
+
+    server.vm.provider "virtualbox" do |vb|
+      vb.name = "zoukaddoS"
+      vb.cpus = 1
+      vb.memory = 1024
+    end
+
+    server.vm.provision "shell", path: "scripts/setup-server.sh"
+  end
+
+  # ==========================================
+  # Agent Node (Worker)
+  # ==========================================
+  config.vm.define "zoukaddoSW" do |worker|
+    worker.vm.hostname = "zoukaddoSW"
+    worker.vm.network "private_network", ip: "192.168.56.111"
+
+    worker.vm.provider "virtualbox" do |vb|
+      vb.name = "zoukaddoSW"
+      vb.cpus = 1
+      vb.memory = 1024
+    end
+
+    worker.vm.provision "shell", path: "scripts/setup-worker.sh"
+  end
+end

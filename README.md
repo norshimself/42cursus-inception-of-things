@@ -1,7 +1,7 @@
 # Inception-of-Things (IoT)
 
 **Summary:** This document is a System Administration related exercise.  
-**Version:** 2.1
+**Version:** 4.0
 
 ---
 
@@ -21,7 +21,7 @@
 
 ## Chapter I — Preamble
 
-[Funny Image]
+![Learning curves](https://user-images.githubusercontent.com/learning-curves-preamble.png)
 
 ---
 
@@ -29,203 +29,200 @@
 
 This project aims to deepen your knowledge by making you use **K3d** and **K3s** with **Vagrant**.
 
-You will learn how to:
-- Set up a personal virtual machine with Vagrant and the distribution of your choice.
-- Use K3s and its Ingress.
-- Discover K3d to simplify Kubernetes operations.
+You will learn how to set up a personal virtual machine with Vagrant and the distribution of your choice. Then, you will learn how to use K3s and its Ingress. Last but not least, you will discover K3d that will simplify your life.
 
 These steps will get you started with **Kubernetes**.
 
-> This project is a minimal introduction to Kubernetes.  
-> Indeed, this tool is too complex to be mastered in a single subject.
+> ℹ️ **Note:** This project is a minimal introduction to Kubernetes. Indeed, this tool is too complex to be mastered in a single subject.
 
 ---
 
 ## Chapter III — General guidelines
 
 - The whole project has to be done in a **virtual machine**.
-- Put all configuration files of your project in folders located at the root of your repository.
-  - The folders of the mandatory part must be named: `p1`, `p2`, and `p3`.
-  - The bonus folder should be named `bonus`.
-- This topic may require concepts you haven't seen yet — don’t hesitate to read documentation on **K8s**, **K3s**, and **K3d**.
+- You have to put all the configuration files of your project in folders located at the root of your repository (go to [Submission and peer-evaluation](#chapter-vi--submission-and-peer-evaluation) for more information). The folders of the mandatory part will be named: `p1`, `p2`, and `p3`, and the bonus one: `bonus`.
+- This topic requires you to apply concepts that, depending on your background, you may not have covered yet. We therefore advise you not to be afraid to read a lot of documentation to learn how to use K8s with K3s, as well as K3d.
 
-> You can use any tools you want to set up your host virtual machine as well as the provider used in Vagrant.
+> ℹ️ **Note:** You can use any tools you want to set up your host virtual machine as well as the provider used in Vagrant.
 
 ---
 
 ## Chapter IV — Mandatory part
 
 This project will consist of setting up several environments under specific rules.  
-It is divided into three parts you must do **in order**:
+It is divided into three parts you have to do in the following order:
 
-1. **Part 1:** K3s and Vagrant  
-2. **Part 2:** K3s and three simple applications  
-3. **Part 3:** K3d and Argo CD
+- **Part 1:** K3s and Vagrant
+- **Part 2:** K3s and three simple applications
+- **Part 3:** K3d and Argo CD
 
 ---
 
 ### IV.1 Part 1: K3s and Vagrant
 
-Set up **2 machines** using Vagrant.
+To begin, you have to set up **2 machines**.
 
-Write your first `Vagrantfile` using the latest stable version of your chosen distribution.  
-Use minimal resources:
-- **CPU:** 1
-- **RAM:** 512–1024 MB
+Write your first `Vagrantfile` using the **latest stable version** of the distribution of your choice as your operating system. It is **STRONGLY advised** to allow only the bare minimum in terms of resources: **1 CPU** and **512 MB of RAM** (or 1024). The machines must be run using Vagrant.
 
 #### Expected specifications:
 
-- Machine names must use your team logins.
-  - Hostname of the first machine: `<login>S` (e.g., `wilS`)
-  - Hostname of the second machine: `<login>SW` (e.g., `wilSW`)
-- Dedicated IPs on `eth1`:
-  - Server: `192.168.56.110`
-  - ServerWorker: `192.168.56.111`
-- SSH access **without password** on both machines.
+- The machine names must be the login of someone from your team. The hostname of the first machine must be followed by the capital letter **S** (like *Server*). The hostname of the second machine must be followed by **SW** (like *ServerWorker*).
+- Have a dedicated IP on the primary network interface. The IP of the first machine (*Server*) will be `192.168.56.110`, and the IP of the second machine (*ServerWorker*) will be `192.168.56.111`.
+- Be able to connect with SSH on both machines with no password.
 
-#### Installation:
+> ⚠️ **Warning:** You will set up your Vagrantfile according to modern practices.
 
-- Install **K3s** on both machines:
-  - On **Server**, install in **controller mode**.
-  - On **ServerWorker**, install in **agent mode**.
-- Install and use **kubectl**.
+#### K3s Installation:
 
-#### Example `Vagrantfile` (partial):
+You must install K3s on both machines:
+- In the first one (*Server*), it will be installed in **controller mode**.
+- In the second one (*ServerWorker*), in **agent mode**.
+
+> 💡 **Tip:** You will have to use `kubectl` (and therefore install it as well).
+
+#### Example `Vagrantfile` (basic structure):
 
 ```ruby
 Vagrant.configure(2) do |config|
-  config.vm.box = "REDACTED"
-  config.vm.box_url = "REDACTED"
+  [...]
+  config.vm.box = REDACTED
+  config.vm.box_url = REDACTED
 
   config.vm.define "wilS" do |control|
     control.vm.hostname = "wilS"
-    control.vm.network "private_network", ip: "192.168.56.110"
-    control.vm.provider "virtualbox" do |v|
+    control.vm.network REDACTED, ip: "192.168.56.110"
+    control.vm.provider REDACTED do |v|
       v.customize ["modifyvm", :id, "--name", "wilS"]
+      [...]
     end
-    control.vm.provision "shell", path: "REDACTED"
+    config.vm.provision :shell, :inline => SHELL
+    [...]
+    SHELL
+    control.vm.provision "shell", path: REDACTED
   end
 
   config.vm.define "wilSW" do |control|
     control.vm.hostname = "wilSW"
-    control.vm.network "private_network", ip: "192.168.56.111"
-    control.vm.provider "virtualbox" do |v|
+    control.vm.network REDACTED, ip: "192.168.56.111"
+    control.vm.provider REDACTED do |v|
       v.customize ["modifyvm", :id, "--name", "wilSW"]
+      [...]
     end
-    control.vm.provision "shell", path: "REDACTED"
+    config.vm.provision "shell", inline: <<-SHELL
+    [...]
+    SHELL
+    control.vm.provision "shell", path: REDACTED
   end
 end
 ```
 
-> On macOS use `ifconfig eth1`,  
-> on Linux use `ip a show eth1` to check IP configuration.
+> ℹ️ **Note on Network Interfaces:** Modern Linux distributions use predictable network interface names (e.g., `enp0s8`, `enp0s9`) instead of `eth0`/`eth1`. To check your network configuration, use `ip a` to list all interfaces, or `ip a show <interface_name>` for a specific interface. On macOS, use `ifconfig`. Adapt the commands according to your system's actual interface names.
 
 ---
 
 ### IV.2 Part 2: K3s and three simple applications
 
-Now that you understand K3s basics, time to go further!
+You now understand the basics of K3s. Time to go further! To complete this part, you will need **only one virtual machine** with the distribution of your choice (latest stable version) and K3s in server mode installed.
 
-Use **one virtual machine** with:
-- Latest stable distribution
-- K3s in **server mode**
+You will set up **3 web applications** of your choice that will run in your K3s instance. You will have to be able to access them depending on the `HOST` used when making a request to the IP address `192.168.56.110`. The name of this machine will be your login followed by **S** (e.g., `wilS` if your login is `wil`).
 
-#### Goal:
+#### Routing specifications:
 
-Deploy **3 web applications** accessible through Ingress routing:
-- Accessed via `192.168.56.110`
-- The host header decides which app to show:
-  - `app1.com` → App 1
-  - `app2.com` → App 2 (3 replicas)
-  - Otherwise → App 3 (default)
+When a client inputs the IP address `192.168.56.110` in their web browser:
+- With the `HOST app1.com` → the server must display **app1**.
+- With the `HOST app2.com` → the server must display **app2** (**3 replicas**).
+- Otherwise → **app3** will be selected by default.
 
-Example behavior:
-```bash
-curl -H "Host: app1.com" http://192.168.56.110
-# Returns App 1 content
-```
+> ℹ️ **Note:** Application number 2 has 3 replicas. Adapt your configuration to create the replicas.
 
-> The Ingress is not displayed in examples — show it during defense.
+> ⚠️ **Warning:** The Ingress is not displayed here on purpose. You will have to show it to your evaluators during your defense.
 
 ---
 
 ### IV.3 Part 3: K3d and Argo CD
 
-Now, without Vagrant, use **K3d** (requires Docker).
+You now master a minimalist version of K3s! Time to set up everything you have just learnt (and much more!) but **without Vagrant this time**. To begin, install **K3d** on your virtual machine.
 
-Write a **setup script** that installs all required tools automatically.
+> 💡 **Tip:** You will need Docker for K3d to work, and probably some other software as well. Therefore, you must write a script to install all the necessary packages and tools during your defense.
 
-#### Requirements:
+First of all, you must understand the difference between K3s and K3d.
 
-- Create two namespaces:
-  1. `argocd`
-  2. `dev` (contains your app)
+Once your configuration works as expected, you can start to create your first continuous integration!
 
-The app in the `dev` namespace must be **deployed automatically** via **Argo CD** using a **public GitHub repository**.
+#### Namespaces:
 
-Your GitHub repository:
-- Must be public
-- Must include the login of a team member in its name
+You have to create two namespaces:
+- The first one will be dedicated to **Argo CD**.
+- The second one will be named **`dev`** and will contain an application. This application will be automatically deployed by Argo CD using your online GitHub repository.
 
-#### Application setup:
+> ℹ️ **Note:** You will have to create a **public repository on GitHub** where you will push your configuration files. You are free to organize it the way you like. The only mandatory requirement is to put the **login of a member of the group** in the name of your repository.
 
-Two options:
-1. Use [Wil’s Playground app on DockerHub](https://hub.docker.com/r/wil42/playground)
-   - Port: `8888`
-   - Tags: `v1`, `v2`
-2. Or create your own Dockerized app and push both versions (`v1`, `v2`).
+#### Application Setup:
 
-Update the app by changing the tag in your GitHub repo — Argo CD should detect and sync the change.
+The application to be deployed must have **two different versions** (v1 and v2).
 
-Example:
+You have two options:
+1. **Use the pre-made application created by Wil:**  
+   Available on Docker Hub: [hub.docker.com/r/wil42/playground](https://hub.docker.com/r/wil42/playground)  
+   The application uses port `8888`. Find the two versions in the TAG section.
+2. **Or code and use your own application:**  
+   Create a public Docker Hub repository to push a Docker image of your application tagged `v1` and `v2` (the two versions must have a few differences).
+
+#### CD Workflow:
+
+You must be able to change the version from your public GitHub repository, then check that the application has been correctly updated by Argo CD.
+
 ```bash
+# Verify v1
 $ cat deployment.yaml | grep v1
 - image: wil42/playground:v1
-
 $ curl http://localhost:8888/
 {"status":"ok", "message": "v1"}
 
 # Update to v2
-$ sed -i 's/v1/v2/g' deploy.yaml
-$ git add . && git commit -m "v2" && git push
-```
+$ sed -i 's/wil42\/playground:v1/wil42\/playground:v2/g' deployment.yaml
+$ git add deployment.yaml && git commit -m "v2" && git push
 
-Argo CD should automatically detect the update and redeploy:
-```bash
+# Verify v2 is automatically synchronized & deployed
 $ curl http://localhost:8888/
 {"status":"ok", "message": "v2"}
 ```
 
-> During evaluation, demonstrate this deployment workflow live.
+> ℹ️ **Note:** During the evaluation process, you will have to do this operation with the app you chose (Wil's or yours).
 
 ---
 
 ## Chapter V — Bonus part
 
-Add **GitLab** to the lab from Part 3.
+The following bonus task is intended to be useful: **add GitLab** to the lab you completed in Part 3.
+
+> ⚠️ **Warning:** Beware this bonus is complex. The latest version available of GitLab from the official website is expected.
+
+You are allowed to use whatever you need to achieve this extra (for example, Helm could be useful here).
 
 #### Requirements:
+- Your GitLab instance must run **locally**.
+- Configure GitLab to make it work with your cluster.
+- Create a dedicated namespace named **`gitlab`**.
+- Everything you did in Part 3 must work with your local GitLab.
 
-- Use the **latest GitLab version** (official site).
-- Deploy GitLab **locally** and integrate it with your cluster.
-- Use a **namespace** named `gitlab`.
-- Ensure everything from Part 3 still works using this local GitLab.
+Turn this extra work in a new folder named `bonus` located at the root of your repository. You can add everything needed so your entire cluster works.
 
-> Use any tool you like (e.g., **Helm**) to complete this bonus.  
-> Only evaluated if the **mandatory part is perfect**.
+> ⚠️ **Warning:** The bonus part will only be assessed if the mandatory part is flawless. Flawless means the mandatory part has been fully completed and functions without issues. If you have not passed ALL the mandatory requirements, your bonus part will not be evaluated at all.
 
 ---
 
 ## Chapter VI — Submission and peer-evaluation
 
-Submit your assignment in your Git repository.
+Turn in your assignment in your Git repository as usual. Only the work inside your repository will be evaluated during the defense. Don't hesitate to double-check the names of your folders and files to ensure they are correct.
 
-#### Guidelines:
-- Mandatory parts: folders `p1`, `p2`, `p3`
-- Optional bonus: folder `bonus`
+#### Reminder:
+- Turn the mandatory part in three folders located at the root of your repository: `p1`, `p2`, and `p3`.
+- *Optional:* Turn the bonus part in a folder located at the root of your repository: `bonus`.
 
-Example directory structure:
-```
+#### Expected directory structure:
+
+```text
 .
 ├── p1/
 │   ├── Vagrantfile
@@ -244,6 +241,6 @@ Example directory structure:
     └── confs/
 ```
 
-- Place **scripts** in a `scripts/` folder.
-- Place **config files** in a `confs/` folder.
-- Evaluation happens on the **evaluated group’s computer**.
+> 💡 **Tip:** Any scripts you need will be added in a `scripts` folder. The configuration files will be in a `confs` folder.
+
+> ℹ️ **Note:** The evaluation process will happen on the computer of the evaluated group.
