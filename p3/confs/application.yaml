@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Peannut/playground.git
+    repoURL: https://github.com/Peannut/zoukaddo-playground.git
     targetRevision: HEAD
     path: .
   destination:

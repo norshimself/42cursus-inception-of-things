@@ -26,7 +26,7 @@ spec:
       volumes:
       - name: html-volume
         hostPath:
-          path: /vagrant/confs/app-one
+          path: /home/vagrant/confs/app-one
 ---
 apiVersion: v1
 kind: Service
@@ -68,7 +68,7 @@ spec:
       volumes:
       - name: html-volume
         hostPath:
-          path: /vagrant/confs/app-two
+          path: /home/vagrant/confs/app-two
 ---
 apiVersion: v1
 kind: Service
@@ -110,7 +110,7 @@ spec:
       volumes:
       - name: html-volume
         hostPath:
-          path: /vagrant/confs/app-three
+          path: /home/vagrant/confs/app-three
 ---
 apiVersion: v1
 kind: Service
@@ -156,5 +156,14 @@ spec:
         backend:
           service:
             name: app-two
+            port:
+              number: 80
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-three
             port:
               number: 80
