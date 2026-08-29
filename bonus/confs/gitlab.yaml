@@ -22,9 +22,17 @@ spec:
             external_url 'http://localhost:8081'
             nginx['listen_port'] = 80
             gitlab_rails['initial_root_password'] = 'Zk9v!Qr7mLp2xT4c'
+            gitlab_rails['monitoring_whitelist'] = ['0.0.0.0/0']
         ports:
         - containerPort: 80
           name: http
+        readinessProbe:
+          httpGet:
+            path: /-/readiness
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 60
 ---
 apiVersion: v1
 kind: Service

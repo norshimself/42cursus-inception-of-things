@@ -1,6 +1,6 @@
 #!/bin/bash
+set -e
 
-echo "Deleting bonus-cluster..."
-k3d cluster delete bonus-cluster 2>/dev/null || true
-
-echo "Clean up complete!"
+pkill -f "port-forward svc/argocd-server" || true
+pkill -f "port-forward svc/gitlab" || true
+k3d cluster delete bonus-cluster
