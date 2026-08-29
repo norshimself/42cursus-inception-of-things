@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-k3d cluster create --config ../confs/k3d-cluster.yaml
+k3d cluster create iot-cluster -p "8888:8888@loadbalancer"
 
 kubectl apply -f ../confs/namespace-argocd.yaml -f ../confs/namespace-dev.yaml
 
